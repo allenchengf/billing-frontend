@@ -6,6 +6,23 @@
  * @property {string} message
  */
 /**
+ * @template T
+ * @typedef {Object} ResponsePageInfo<T>
+ * @property {T} data
+ * @property {number} code
+ * @property {string} message
+ * @property {number} current_page
+ * @property {number} per_page
+ * @property {number} total
+ */
+/**
+ * @template T
+ * @typedef {Object} ElTableScope<T>
+ * @property {number} $index
+ * @property {object} column
+ * @property {T} row
+ */
+/**
  * @typedef {Object} TokenData
  * @property {number} pk
  * @property {string} token

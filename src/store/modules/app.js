@@ -2,11 +2,15 @@ import { getStorage, setStorage } from '@/utils/storage'
 
 const state = {
   sidebar: {
-    opened: getStorage('sidebarStatus') ? !!+getStorage('sidebarStatus') : true,
+    opened: true,
     withoutAnimation: false
   },
   device: 'desktop'
 }
+
+getStorage('sidebarStatus').then(value => {
+  state.sidebar.opened = value === null ? true : Boolean(value)
+})
 
 const mutations = {
   TOGGLE_SIDEBAR: state => {
@@ -19,9 +23,9 @@ const mutations = {
     }
   },
   CLOSE_SIDEBAR: (state, withoutAnimation) => {
-    setStorage('sidebarStatus', 0)
     state.sidebar.opened = false
     state.sidebar.withoutAnimation = withoutAnimation
+    setStorage('sidebarStatus', 0)
   },
   TOGGLE_DEVICE: (state, device) => {
     state.device = device
