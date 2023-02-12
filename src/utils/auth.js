@@ -1,6 +1,6 @@
 import { getStorage, setStorage, removeStorage } from './storage'
 
-const TokenKey = 'vue_admin_template_token'
+const TokenKey = 'ADMIN_TOKEN'
 
 export function getToken() {
   return getStorage(TokenKey)

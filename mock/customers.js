@@ -46,7 +46,7 @@ const data = [
 
 module.exports = [
   {
-    url: '/api/v1/customers/',
+    url: '/customers/',
     type: 'get',
     response: config => {
       return {

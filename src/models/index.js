@@ -1,4 +1,11 @@
 /**
+ * @template T
+ * @typedef {Object} ResponseInfo<T>
+ * @property {T} data
+ * @property {number} code
+ * @property {string} message
+ */
+/**
  * @typedef {Object} TokenData
  * @property {number} pk
  * @property {string} token

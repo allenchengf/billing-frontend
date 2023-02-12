@@ -17,7 +17,7 @@ const data = [
 
 module.exports = [
   {
-    url: '/api/v1/subscriptions/',
+    url: '/subscriptions/',
     type: 'get',
     response: config => {
       return {

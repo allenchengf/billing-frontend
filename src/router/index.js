@@ -119,6 +119,7 @@ const router = createRouter()
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
+  router.push('/login')
 }
 
 export default router

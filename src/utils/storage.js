@@ -1,14 +1,14 @@
 import localForage from 'localforage'
 // import Cookies from 'js-cookie'
 
-export function getStorage(key, callback) {
-  localForage.getItem(key, callback)
+export function getStorage(key) {
+  return localForage.getItem(key)
 }
 
-export function setStorage(key, value, callback) {
-  localForage.setItem(key, value, callback)
+export function setStorage(key, value) {
+  return localForage.setItem(key, value)
 }
 
-export function removeStorage(key, callback) {
-  localForage.removeItem(key, callback)
+export function removeStorage(key) {
+  return localForage.removeItem(key)
 }
