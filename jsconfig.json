@@ -1,9 +1,18 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
+    "target": "esnext",
+    "module": "esnext",
+    "baseUrl": ".",
     "paths": {
-        "@/*": ["src/*"]
-    }
+      "@/*": ["src/*"]
+    },
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "moduleResolution": "node"
   },
+  "vueCompilerOptions": {
+    "target": 2,
+    "plugins": ["@volar/vue-language-plugin-pug"]
+  },
+  "include": ["./types/**/*", "./src/**/*", "./tests/**/*", "mock/**/*"],
   "exclude": ["node_modules", "dist"]
 }
