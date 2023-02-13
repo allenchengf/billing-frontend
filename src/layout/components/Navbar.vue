@@ -13,7 +13,7 @@
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              <span style="display:block;">Log Out</span>
+              <span style="display:block;" @click="logout">Log Out</span>
             </el-dropdown-item>
           </router-link>
         </el-dropdown-menu>

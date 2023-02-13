@@ -20,6 +20,17 @@ function param2Obj(url) {
   return obj
 }
 
+function rawHeadersToJson(rawHeaders) {
+  const result = {}
+  for (let index = 0; index < rawHeaders.length; index += 2) {
+    const key = rawHeaders[index]
+    const value = rawHeaders[index + 1]
+    result[key] = value
+  }
+  return result
+}
+
 module.exports = {
-  param2Obj
+  param2Obj,
+  rawHeadersToJson
 }

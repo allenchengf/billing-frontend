@@ -1,27 +1,31 @@
-import Cookies from 'js-cookie'
+import { getStorage, setStorage } from '@/utils/storage'
 
 const state = {
   sidebar: {
-    opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
+    opened: true,
     withoutAnimation: false
   },
   device: 'desktop'
 }
+
+getStorage('sidebarStatus').then(value => {
+  state.sidebar.opened = value === null ? true : Boolean(value)
+})
 
 const mutations = {
   TOGGLE_SIDEBAR: state => {
     state.sidebar.opened = !state.sidebar.opened
     state.sidebar.withoutAnimation = false
     if (state.sidebar.opened) {
-      Cookies.set('sidebarStatus', 1)
+      setStorage('sidebarStatus', 1)
     } else {
-      Cookies.set('sidebarStatus', 0)
+      setStorage('sidebarStatus', 0)
     }
   },
   CLOSE_SIDEBAR: (state, withoutAnimation) => {
-    Cookies.set('sidebarStatus', 0)
     state.sidebar.opened = false
     state.sidebar.withoutAnimation = withoutAnimation
+    setStorage('sidebarStatus', 0)
   },
   TOGGLE_DEVICE: (state, device) => {
     state.device = device

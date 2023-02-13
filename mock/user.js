@@ -1,78 +1,70 @@
+const { rawHeadersToJson } = require('./utils')
 
 const tokens = {
-  admin: {
-    token: 'admin-token'
-  },
-  editor: {
-    token: 'editor-token'
+  rdadmin: {
+    password: '1qaz@WSX',
+    data: {
+      pk: 1676172957,
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJkYWRtaW4iLCJpYXQiOjE2NzYxNzI5NTcsImV4cCI6MTY3NjI1OTM1NywianRpIjoiNmRhYjlhY2UtNzU0Zi00MWM5LTljNTYtMGYzMTYwMmI3Y2JlIiwidXNlcl9pZCI6MSwib3JpZ19pYXQiOjE2NzYxNzI5NTd9.hhEJZMlnTxob90kLBlKgaRUmwSwbQ7XvKmLwsOv6y_Q'
+    }
   }
 }
 
 const users = {
-  'admin-token': {
+  [tokens.rdadmin.data.token]: {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Super Admin'
-  },
-  'editor-token': {
-    roles: ['editor'],
-    introduction: 'I am an editor',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
   }
 }
 
 module.exports = [
-  // user login
   {
-    url: '/vue-admin-template/user/login',
+    url: '/token-auth/',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
-
-      // mock error
-      if (!token) {
+      const { username, password } = config.body
+      try {
+        if (tokens[username].password !== password) {
+          throw new Error('Account and password are incorrect.')
+        }
         return {
-          code: 60204,
+          code: 20000,
+          data: tokens[username].data
+        }
+      } catch (error) {
+        return {
+          code: 40100,
+          data: null,
           message: 'Account and password are incorrect.'
         }
       }
-
-      return {
-        code: 20000,
-        data: token
-      }
     }
   },
-
-  // get user info
   {
-    url: '/vue-admin-template/user/info\.*',
+    url: '/user/',
     type: 'get',
     response: config => {
-      const { token } = config.query
-      const info = users[token]
-
-      // mock error
-      if (!info) {
+      const headers = rawHeadersToJson(config.rawHeaders)
+      const token = headers['Authentication']
+      if (token) {
         return {
-          code: 50008,
-          message: 'Login failed, unable to get user details.'
+          code: 20000,
+          data: users[token]
         }
-      }
-
-      return {
-        code: 20000,
-        data: info
+      } else {
+        return {
+          code: 40100,
+          message: 'Login failed, unable to get user details.',
+          data: null
+        }
       }
     }
   },
-
   // user logout
   {
-    url: '/vue-admin-template/user/logout',
+    url: '/logout/',
     type: 'post',
     response: _ => {
       return {
