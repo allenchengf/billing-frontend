@@ -71,22 +71,40 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="current_page" :limit.sync="per_page" @pagination="handleCurrentChange" />
 
-    <el-dialog v-if="dialog.includes('create')" key="create">
-      <div>create</div>
+    <el-dialog title="Create Subscription" :visible="dialog === 'create' || dialog === 'update'" @close="handleCancel">
+      <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;" @submit="handleSubmit">
+        <el-form-item label="Description" prop="description">
+          <el-input v-model="model.description" />
+        </el-form-item>
+        <el-form-item label="Product" prop="product">
+          <el-input v-model="model.product" />
+        </el-form-item>
+        <el-form-item label="Service ID" prop="service_id">
+          <el-input v-model="model.service_id" />
+        </el-form-item>
+        <el-form-item label="POC" prop="poc">
+          <el-input v-model="model.poc" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleCancel">
+          Cancel
+        </el-button>
+        <el-button type="primary" native-type="submit" @click="handleSubmit">
+          Confirm
+        </el-button>
+      </div>
     </el-dialog>
 
-    <el-dialog v-if="dialog.includes('update')" key="update">
+    <el-dialog v-if="dialog === 'update'" key="update">
       <div>update</div>
-    </el-dialog>
-
-    <el-dialog v-if="dialog.includes('delete')" key="delete">
-      <div>delete</div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import dayjs from 'dayjs'
+import { isUndefined } from '@/utils/is'
+import { createNow, parseTime } from '@/utils/datetime'
 import { getSubscriptions } from '@/api/table'
 import Pagination from '@/components/Pagination/index.vue'
 
@@ -105,8 +123,47 @@ import Pagination from '@/components/Pagination/index.vue'
  * @property {number} total
  * @property {number} current_page
  * @property {number} per_page
- * @property {string[]} dialog
+ * @property {'' | 'create' | 'update'} dialog
+ * @property {SubscriptionModel} model
  */
+
+/**
+  * @return {SubscriptionModel}
+  */
+function createDefaultSubscriptionModel() {
+  return {
+    id: 0,
+    customer_id: 0,
+    product: '',
+    service_id: '',
+    poc: '',
+    status: '',
+    description: '',
+    created_at: createNow(),
+    updated_at: createNow()
+  }
+}
+
+/**
+  * @param {Partial<SubscriptionModel>} model
+  * @return {SubscriptionModel}
+  */
+function createSubscriptionModel(model) {
+  const defaultModel = createDefaultSubscriptionModel()
+  if (model) {
+    if (isUndefined(model.id)) model.id = defaultModel.id
+    if (isUndefined(model.poc)) model.poc = defaultModel.poc
+    if (isUndefined(model.description)) model.description = defaultModel.description
+    if (isUndefined(model.product)) model.product = defaultModel.product
+    if (isUndefined(model.service_id)) model.service_id = defaultModel.service_id
+    if (isUndefined(model.status)) model.status = defaultModel.status
+    if (isUndefined(model.customer_id)) model.customer_id = defaultModel.customer_id
+    if (isUndefined(model.created_at)) model.created_at = defaultModel.created_at
+    if (isUndefined(model.updated_at)) model.updated_at = defaultModel.updated_at
+    return model
+  }
+  return defaultModel
+}
 
 const statusMap = {
   published: 'success',
@@ -126,7 +183,9 @@ export default {
       total: 1,
       current_page: 1,
       per_page: 10,
-      dialog: []
+      dialog: '',
+      model: createDefaultSubscriptionModel(),
+      rules: {}
     }
   },
   computed: {
@@ -136,29 +195,30 @@ export default {
     }
   },
   watch: {
-    /**
-     * @param {import('vue-router').Route} to
-     * @param {import('vue-router').Route} from
-     */
-    $route(to) {
-      const { query } = to
-      if (query.dialog) {
-        this.dialog = Array.isArray(query.dialog) ? query.dialog : [query.dialog]
-      }
+    $route() {
+      this.init()
     }
   },
   created() {
-    this.fetchData()
+    this.init()
   },
   methods: {
-    /**
-     * @param {string | number | Date} time
-     * @param {string} [format="YYYY-MM-DD HH:mm:ss"]
-     * @return {string}
-     */
-    parseTime(time, format = 'YYYY-MM-DD HH:mm:ss') {
-      return dayjs(time).format(format)
+    init() {
+      const { query } = this.$route
+      if (query.dialog) {
+        if (Array.isArray(query.dialog)) {
+          const [dialog] = query.dialog
+          this.dialog = dialog
+        } else {
+          this.dialog = query.dialog
+        }
+      } else {
+        this.dialog = ''
+      }
+      // fetch data
+      this.fetchData()
     },
+    parseTime,
     /**
      * @param {keyof typeof statusMap} status
      * @return {string}
@@ -208,21 +268,48 @@ export default {
      * @param {SubscriptionModel} row
      */
     handleUpdate(row) {
+      this.model = createSubscriptionModel(row)
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
         dialog: 'update',
         id: row.id
       }})
     },
+    handleCancel() {
+      this.model = createSubscriptionModel()
+      this.$router.push({ ...this.$route, query: {
+        ...this.$route.query,
+        id: undefined,
+        dialog: undefined
+      }})
+    },
+    handleSubmit(e) {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.model.id === 0) {
+            console.log('create')
+          } else {
+            console.log('update')
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
     /**
      * @param {SubscriptionModel} row
      */
     handleDelete(row) {
-      this.$router.push({ ...this.$route, query: {
-        ...this.$route.query,
-        dialog: 'delete',
-        id: row.id
-      }})
+      this.$confirm('Are you sure you want to delete this?', 'confirm', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        //
+      }).catch(() => {
+        //
+      })
     }
   }
 }
