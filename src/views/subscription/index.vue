@@ -72,7 +72,7 @@
     <pagination v-if="total > 0" :total="total" :page.sync="page" :limit.sync="perPage" @pagination="handleCurrentChange" />
 
     <el-dialog title="Create Subscription" :visible="dialog === 'create' || dialog === 'update'" @close="handleCancel">
-      <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;" @submit="handleSubmit">
+      <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;" @submit="onSubmit">
         <el-form-item label="Customer" prop="customer_id">
           <el-input v-model="model.customer_id" />
         </el-form-item>
@@ -95,7 +95,7 @@
         <el-button @click="cancelModal">
           Cancel
         </el-button>
-        <el-button type="primary" native-type="submit" @click="handleSubmit">
+        <el-button type="primary" native-type="submit" @click="onSubmit">
           Confirm
         </el-button>
       </div>
@@ -235,7 +235,7 @@ export default {
       this.init()
     }
   },
-  created() {
+  async created() {
     this.fetchData()
     this.init()
   },
@@ -298,6 +298,17 @@ export default {
       return req.then(response => {
         this.list = response.data
         this.removeQueue(req)
+      }).then(() => {
+        const { query } = this.$route
+        if (query.id) {
+          const id = Number(query.id)
+          const model = this.list.find((p) => id === p.id)
+          if (model) {
+            this.model = createSubscriptionModel(model)
+          } else {
+            this.cancelModal()
+          }
+        }
       })
     },
     openCreateModal() {
@@ -325,22 +336,44 @@ export default {
         dialog: undefined
       }})
     },
-    handleSubmit(e) {
+    async handleSubmit() {
+      const form = {
+        customer_id: this.model.customer_id,
+        description: this.model.description,
+        product: this.model.product,
+        service_id: this.model.service_id,
+        poc: this.model.poc,
+        status: this.model.status
+      }
+      try {
+        const notifyOptions = {
+          title: 'Success',
+          message: '',
+          type: 'success',
+          duration: 2000
+        }
+        if (this.model.id === 0) {
+          await postSubscriptions(form)
+          notifyOptions.message = 'Create Successfully'
+        } else {
+          await putSubscriptions(this.model.id, form)
+          notifyOptions.message = 'Update Successfully'
+        }
+        this.cancelModal()
+        this.$notify(notifyOptions)
+      } catch (error) {
+        this.$notify({
+          title: 'Error',
+          message: error.message,
+          type: 'error',
+          duration: 2000
+        })
+      }
+    },
+    onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          const form = {
-            customer_id: this.model.customer_id,
-            description: this.model.description,
-            product: this.model.product,
-            service_id: this.model.service_id,
-            poc: this.model.poc,
-            status: this.model.status
-          }
-          if (this.model.id === 0) {
-            postSubscriptions(form)
-          } else {
-            putSubscriptions(this.model.id, form)
-          }
+          this.handleSubmit()
         } else {
           console.log('error submit!!')
           return false
@@ -356,10 +389,25 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        deleteSubscriptions(row.id)
-      }).catch(() => {
-        //
+        return deleteSubscriptions(row.id)
+          .then(() => {
+            this.cancelModal()
+            this.$notify({
+              title: 'Success',
+              message: 'Delete Successfully',
+              type: 'success',
+              duration: 2000
+            })
+          }).catch((error) => {
+            this.$notify({
+              title: 'Error',
+              message: error.message,
+              type: 'error',
+              duration: 2000
+            })
+          })
       })
+        .catch(() => Promise.resolve())
     }
   }
 }
