@@ -2,35 +2,35 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateModal">
         Add
       </el-button>
     </div>
 
     <el-table
       v-loading="isLoading"
-      :data="list"
+      :data="displayList"
       element-loading-text="Loading"
       :border="true"
       fit
       highlight-current-row
     >
-      <el-table-column :align="'center'" label="Index" width="60">
+      <el-table-column :align="'center'" label="" width="60">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="Poc" width="100">
+      <el-table-column label="Poc">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           {{ scope.row.poc }}
         </template>
       </el-table-column>
-      <el-table-column label="Description" width="110" :align="'center'">
+      <el-table-column label="Description">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Product" width="110" :align="'center'">
+      <el-table-column label="Product" width="100">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           {{ scope.row.product }}
         </template>
@@ -59,7 +59,7 @@
       </el-table-column>
       <el-table-column label="Actions" :align="'center'" width="180" class-name="small-padding fixed-width">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">
+          <el-button type="primary" size="mini" @click="openUpdateModal(scope.row)">
             Edit
           </el-button>
           <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleDelete(scope.row)">
@@ -69,15 +69,20 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="current_page" :limit.sync="per_page" @pagination="handleCurrentChange" />
+    <pagination v-if="total > 0" :total="total" :page.sync="page" :limit.sync="perPage" @pagination="handleCurrentChange" />
 
     <el-dialog title="Create Subscription" :visible="dialog === 'create' || dialog === 'update'" @close="handleCancel">
       <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;" @submit="handleSubmit">
+        <el-form-item label="Customer" prop="customer_id">
+          <el-input v-model="model.customer_id" />
+        </el-form-item>
         <el-form-item label="Description" prop="description">
           <el-input v-model="model.description" />
         </el-form-item>
         <el-form-item label="Product" prop="product">
-          <el-input v-model="model.product" />
+          <el-select v-model="model.product" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
+          </el-select>
         </el-form-item>
         <el-form-item label="Service ID" prop="service_id">
           <el-input v-model="model.service_id" />
@@ -87,7 +92,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">
+        <el-button @click="cancelModal">
           Cancel
         </el-button>
         <el-button type="primary" native-type="submit" @click="handleSubmit">
@@ -103,28 +108,27 @@
 </template>
 
 <script>
+/** @typedef {import('@/models').SubscriptionModel} SubscriptionModel */
+/** @template T @typedef {import('@/models').ElTableScope<T>} ElTableScope<T> */
+/** @template T @typedef {T extends Record<string, infer R> ? R : unknown} EnumValue */
+/** @typedef {import('@/types/validator').Rule} Rule */
 import { isUndefined } from '@/utils/is'
+import { chunk } from '@/utils/helper'
 import { createNow, parseTime } from '@/utils/datetime'
-import { getSubscriptions } from '@/api/table'
+import { getSubscriptions, postSubscriptions, putSubscriptions, deleteSubscriptions } from '@/api/table'
 import Pagination from '@/components/Pagination/index.vue'
-
-/**
- * @typedef {import('@/models').SubscriptionModel} SubscriptionModel
- */
-/**
- * @template T
- * @typedef {import('@/models').ElTableScope<T>} ElTableScope<T>
- */
 
 /**
  * @typedef {Object} ComponentData
  * @property {SubscriptionModel[]} list
  * @property {Promise<any>[]} queue
  * @property {number} total
- * @property {number} current_page
- * @property {number} per_page
+ * @property {number} page
+ * @property {number} perPage
  * @property {'' | 'create' | 'update'} dialog
  * @property {SubscriptionModel} model
+ * @property {{ [ K in keyof SubscriptionModel]: Rule[] }} rules
+ * @property {EnumValue<typeof ProductOptions>[]} productOptions
  */
 
 /**
@@ -171,6 +175,25 @@ const statusMap = {
   deleted: 'danger'
 }
 
+/**
+ * @enum {string}
+ */
+const ProductOptions = {
+  /** @type {'Production1'} */
+  PROD1: 'Production1',
+  /** @type {'Production2'} */
+  PROD2: 'Production2',
+  /** @type {'Production3'} */
+  PROD3: 'Production3',
+  /** @type {'Production4'} */
+  PROD4: 'Production4'
+}
+
+const defaultSettings = {
+  page: 1,
+  perPage: 10
+}
+
 export default {
   components: {
     Pagination
@@ -180,18 +203,31 @@ export default {
     return {
       list: [],
       queue: [],
-      total: 1,
-      current_page: 1,
-      per_page: 10,
+      page: defaultSettings.page,
+      perPage: defaultSettings.perPage,
       dialog: '',
       model: createDefaultSubscriptionModel(),
-      rules: {}
+      rules: {
+        description: [{ required: true }],
+        product: [{ required: true }],
+        service_id: [{ required: true }],
+        poc: [{ required: true }]
+      },
+      productOptions: Object.values(ProductOptions)
     }
   },
   computed: {
     /** @return {boolean} */
     isLoading() {
       return this.queue.length
+    },
+    /** @return {SubscriptionModel[]} */
+    displayList() {
+      return chunk(this.list, this.perPage)[this.page - 1]
+    },
+    /** @return {number} */
+    total() {
+      return this.list.length
     }
   },
   watch: {
@@ -200,9 +236,11 @@ export default {
     }
   },
   created() {
+    this.fetchData()
     this.init()
   },
   methods: {
+    parseTime,
     init() {
       const { query } = this.$route
       if (query.dialog) {
@@ -215,10 +253,13 @@ export default {
       } else {
         this.dialog = ''
       }
-      // fetch data
-      this.fetchData()
+      if (query.page) {
+        this.page = Number(query.page) || defaultSettings.page
+      }
+      if (query.per_page) {
+        this.perPage = Number(query.per_page) || defaultSettings.perPage
+      }
     },
-    parseTime,
     /**
      * @param {keyof typeof statusMap} status
      * @return {string}
@@ -244,7 +285,8 @@ export default {
     handleCurrentChange(info) {
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
-        page: info.page
+        page: info.page === defaultSettings.page ? undefined : info.page,
+        per_page: info.limit === defaultSettings.perPage ? undefined : info.limit
       }})
     },
     /**
@@ -258,7 +300,7 @@ export default {
         this.removeQueue(req)
       })
     },
-    handleCreate() {
+    openCreateModal() {
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
         dialog: 'create'
@@ -267,7 +309,7 @@ export default {
     /**
      * @param {SubscriptionModel} row
      */
-    handleUpdate(row) {
+    openUpdateModal(row) {
       this.model = createSubscriptionModel(row)
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
@@ -275,7 +317,7 @@ export default {
         id: row.id
       }})
     },
-    handleCancel() {
+    cancelModal() {
       this.model = createSubscriptionModel()
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
@@ -286,10 +328,18 @@ export default {
     handleSubmit(e) {
       this.$refs['form'].validate((valid) => {
         if (valid) {
+          const form = {
+            customer_id: this.model.customer_id,
+            description: this.model.description,
+            product: this.model.product,
+            service_id: this.model.service_id,
+            poc: this.model.poc,
+            status: this.model.status
+          }
           if (this.model.id === 0) {
-            console.log('create')
+            postSubscriptions(form)
           } else {
-            console.log('update')
+            putSubscriptions(this.model.id, form)
           }
         } else {
           console.log('error submit!!')
@@ -306,7 +356,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        //
+        deleteSubscriptions(row.id)
       }).catch(() => {
         //
       })
