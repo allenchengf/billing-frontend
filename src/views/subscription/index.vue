@@ -181,7 +181,7 @@ const statusMap = {
  */
 const ProductOptions = {
   /** @type {'Production1'} */
-  PROD1: 'uCDN Production',
+  PROD1: 'uCDN',
   /** @type {'Production2'} */
   PROD2: 'H7Connect-DC',
   /** @type {'Production3'} */
