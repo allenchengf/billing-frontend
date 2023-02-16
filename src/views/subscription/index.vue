@@ -20,29 +20,29 @@
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="Poc">
+      <el-table-column label="Product Name" width="120">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
-          {{ scope.row.poc }}
+          {{ scope.row.product }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Service ID" width="120" :align="'center'">
+        <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
+          {{ scope.row.service_id }}
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="Status" width="120" :align="'center'">
+        <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
+          <el-tag :type="statusType(scope.row.status)">{{ scope.row.status }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="Customer ID" width="120" :align="'center'">
+        <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
+          {{ scope.row.service_id }}
         </template>
       </el-table-column>
       <el-table-column label="Description">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <span>{{ scope.row.description }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Product" width="100">
-        <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
-          {{ scope.row.product }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Service" width="110" :align="'center'">
-        <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
-          {{ scope.row.service_id }}
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" :align="'center'">
-        <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
-          <el-tag :type="statusType(scope.row.status)">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :align="'center'" prop="created_at" label="Created At" width="200">
@@ -73,12 +73,6 @@
 
     <el-dialog title="Create Subscription" :visible="dialog === 'create' || dialog === 'update'" @close="handleCancel">
       <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;" @submit="onSubmit">
-        <el-form-item label="Customer" prop="customer_id">
-          <el-input v-model="model.customer_id" />
-        </el-form-item>
-        <el-form-item label="Description" prop="description">
-          <el-input v-model="model.description" />
-        </el-form-item>
         <el-form-item label="Product" prop="product">
           <el-select v-model="model.product" class="filter-item" placeholder="Please select">
             <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
@@ -87,8 +81,16 @@
         <el-form-item label="Service ID" prop="service_id">
           <el-input v-model="model.service_id" />
         </el-form-item>
-        <el-form-item label="POC" prop="poc">
-          <el-input v-model="model.poc" />
+        <el-form-item label="Status" prop="product">
+          <el-select v-model="model.status" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Customer" prop="customer_id">
+          <el-input v-model="model.customer_id" />
+        </el-form-item>
+        <el-form-item label="Description" prop="description">
+          <el-input v-model="model.description" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -129,6 +131,7 @@ import Pagination from '@/components/Pagination/index.vue'
  * @property {SubscriptionModel} model
  * @property {{ [ K in keyof SubscriptionModel]: Rule[] }} rules
  * @property {EnumValue<typeof ProductOptions>[]} productOptions
+ * @property {EnumValue<typeof StatusOptions>[]} statusOptions
  */
 
 /**
@@ -140,7 +143,6 @@ function createDefaultSubscriptionModel() {
     customer_id: 0,
     product: '',
     service_id: '',
-    poc: '',
     status: '',
     description: '',
     created_at: createNow(),
@@ -156,9 +158,8 @@ function createSubscriptionModel(model) {
   const defaultModel = createDefaultSubscriptionModel()
   if (model) {
     if (isUndefined(model.id)) model.id = defaultModel.id
-    if (isUndefined(model.poc)) model.poc = defaultModel.poc
-    if (isUndefined(model.description)) model.description = defaultModel.description
     if (isUndefined(model.product)) model.product = defaultModel.product
+    if (isUndefined(model.description)) model.description = defaultModel.description
     if (isUndefined(model.service_id)) model.service_id = defaultModel.service_id
     if (isUndefined(model.status)) model.status = defaultModel.status
     if (isUndefined(model.customer_id)) model.customer_id = defaultModel.customer_id
@@ -180,13 +181,29 @@ const statusMap = {
  */
 const ProductOptions = {
   /** @type {'Production1'} */
-  PROD1: 'Production1',
+  PROD1: 'uCDN Production',
   /** @type {'Production2'} */
-  PROD2: 'Production2',
+  PROD2: 'H7Connect-DC',
   /** @type {'Production3'} */
-  PROD3: 'Production3',
+  PROD3: 'H7Connect-IX',
   /** @type {'Production4'} */
-  PROD4: 'Production4'
+  PROD4: 'H7Connect-CHINA IP',
+  /** @type {'Production5'} */
+  PROD5: 'H7Connect-VC',
+  /** @type {'Production6'} */
+  PROD6: 'Infrastructure'
+}
+
+/**
+ * @enum {string}
+ */
+const StatusOptions = {
+  /** @type {'Status1'} */
+  STATUS1: 'In Use',
+  /** @type {'Status2'} */
+  STATUS2: 'Terminated',
+  /** @type {'Status3'} */
+  STATUS3: 'For Poc'
 }
 
 const defaultSettings = {
@@ -208,12 +225,12 @@ export default {
       dialog: '',
       model: createDefaultSubscriptionModel(),
       rules: {
-        description: [{ required: true }],
+        description: [{ required: false }],
         product: [{ required: true }],
-        service_id: [{ required: true }],
-        poc: [{ required: true }]
+        service_id: [{ required: true }]
       },
-      productOptions: Object.values(ProductOptions)
+      productOptions: Object.values(ProductOptions),
+      statusOptions: Object.values(StatusOptions)
     }
   },
   computed: {
@@ -342,7 +359,6 @@ export default {
         description: this.model.description,
         product: this.model.product,
         service_id: this.model.service_id,
-        poc: this.model.poc,
         status: this.model.status
       }
       try {
