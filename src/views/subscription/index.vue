@@ -173,7 +173,7 @@ function createSubscriptionModel(model) {
 const statusMap = {
   published: 'success',
   draft: 'gray',
-  deleted: 'danger'
+  Terminated: 'danger'
 }
 
 /**
@@ -353,6 +353,14 @@ export default {
         dialog: undefined
       }})
     },
+    handleCancel() {
+      this.model = createSubscriptionModel()
+      this.$router.push({ ...this.$route, query: {
+        ...this.$route.query,
+        id: undefined,
+        dialog: undefined
+      }})
+    },
     async handleSubmit() {
       const form = {
         customer_id: this.model.customer_id,
@@ -370,9 +378,11 @@ export default {
         }
         if (this.model.id === 0) {
           await postSubscriptions(form)
+          this.fetchData()
           notifyOptions.message = 'Create Successfully'
         } else {
           await putSubscriptions(this.model.id, form)
+          this.fetchData()
           notifyOptions.message = 'Update Successfully'
         }
         this.cancelModal()
@@ -408,6 +418,7 @@ export default {
         return deleteSubscriptions(row.id)
           .then(() => {
             this.cancelModal()
+            this.fetchData()
             this.$notify({
               title: 'Success',
               message: 'Delete Successfully',
