@@ -16,13 +16,6 @@
  * @property {number} total
  */
 /**
- * @template T
- * @typedef {Object} ElTableScope<T>
- * @property {number} $index
- * @property {object} column
- * @property {T} row
- */
-/**
  * @typedef {Object} TokenData
  * @property {number} pk
  * @property {string} token
