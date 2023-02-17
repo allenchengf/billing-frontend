@@ -5,10 +5,10 @@ services:
     image: 'frontend'
     build:
       context: .
-      dockerfile: dockerfile.development
+      dockerfile: Dockerfile
     ports:
       - '9528:9528'
-    command: npm run dev
+    command: npm run build:stage
     container_name: frontend
     volumes:
       - .:/app
