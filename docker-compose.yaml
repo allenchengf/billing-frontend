@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '9528:9528'
+      - '9528:80'
     command: npm run build:stage
     container_name: frontend
     volumes:
