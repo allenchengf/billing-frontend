@@ -30,6 +30,46 @@ export function getCustomers() {
 }
 
 /**
+ * @typedef {'customer_name'|'customer_id'|'customer_property'|'am'|'description'} CustomerUpdateColumn
+ */
+
+/**
+ * @param {Pick<CustomerModel,CustomerUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function postCustomers(data) {
+  return request({
+    url: '/customers/',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @param {Pick<CustomerModel,CustomerUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function putCustomers(id, data) {
+  return request({
+    url: '/customers/' + id,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function deleteCustomers(id) {
+  return request({
+    url: '/customers/' + id,
+    method: 'delete'
+  })
+}
+
+/**
  * @returns {Promise<ResponseInfo<SubscriptionModel[]>>}
  */
 export function getSubscriptions() {
