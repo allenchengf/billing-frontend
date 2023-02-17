@@ -63,7 +63,7 @@ export function postSubscriptions(data) {
 export function putSubscriptions(id, data) {
   return request({
     url: '/subscriptions/' + id,
-    method: 'post',
+    method: 'put',
     data
   })
 }
