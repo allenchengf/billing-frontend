@@ -48,13 +48,13 @@
       <el-table-column :align="'center'" prop="created_at" label="Created At" width="200">
         <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
           <i class="el-icon-time" />
-          <span>{{ parseTime(scope.row.created_at, 'YYYY/MM/DD hh:mm:ss') }}</span>
+          <span>{{ parseTime(scope.row.created_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200">
         <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
           <i class="el-icon-time" />
-          <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD hh:mm:ss') }}</span>
+          <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" :align="'center'" width="180" class-name="small-padding fixed-width">
