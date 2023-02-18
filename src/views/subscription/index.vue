@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column label="Customer ID" width="120" :align="'center'">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
-          {{ scope.row.service_id }}
+          {{ scope.row.customer }}
         </template>
       </el-table-column>
       <el-table-column label="Description">
@@ -48,13 +48,13 @@
       <el-table-column :align="'center'" prop="created_at" label="Created At" width="200">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <i class="el-icon-time" />
-          <span>{{ parseTime(scope.row.created_at, 'YYYY/MM/DD hh:mm:ss') }}</span>
+          <span>{{ parseTime(scope.row.created_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <i class="el-icon-time" />
-          <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD hh:mm:ss') }}</span>
+          <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" :align="'center'" width="180" class-name="small-padding fixed-width">
@@ -87,7 +87,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Customer" prop="customer_id">
-          <el-input v-model="model.customer_id" />
+          <el-select v-model="model.customer_id" filterable placeholder="Please select">
+            <el-option
+              v-for="item in customerOptions"
+              :key="item.id"
+              :label="item.customer_id"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="Description" prop="description">
           <el-input v-model="model.description" />
@@ -117,7 +124,13 @@
 import { isUndefined } from '@/utils/is'
 import { chunk } from '@/utils/helper'
 import { createNow, parseTime } from '@/utils/datetime'
-import { getSubscriptions, postSubscriptions, putSubscriptions, deleteSubscriptions } from '@/api/table'
+import {
+  getSubscriptions,
+  postSubscriptions,
+  putSubscriptions,
+  deleteSubscriptions,
+  getCustomers
+} from '@/api/table'
 import Pagination from '@/components/Pagination/index.vue'
 
 /**
@@ -140,7 +153,7 @@ import Pagination from '@/components/Pagination/index.vue'
 function createDefaultSubscriptionModel() {
   return {
     id: 0,
-    customer_id: 0,
+    customer_id: '',
     product: '',
     service_id: '',
     status: '',
@@ -227,10 +240,14 @@ export default {
       rules: {
         description: [{ required: false }],
         product: [{ required: true }],
-        service_id: [{ required: true }]
+        service_id: [{ required: true }],
+        status: [{ required: true }],
+        customer_id: [{ required: true }]
       },
       productOptions: Object.values(ProductOptions),
-      statusOptions: Object.values(StatusOptions)
+      statusOptions: Object.values(StatusOptions),
+      customerOptions: [],
+      customerList: {}
     }
   },
   computed: {
@@ -253,6 +270,7 @@ export default {
     }
   },
   async created() {
+    this.createCustomerOptions()
     this.fetchData()
     this.init()
   },
@@ -314,6 +332,9 @@ export default {
       this.addQueue(req)
       return req.then(response => {
         this.list = response.data
+        this.list.forEach((item) => {
+          item.customer = this.customerList[item.customer_id].customer_id
+        })
         this.removeQueue(req)
       }).then(() => {
         const { query } = this.$route
@@ -326,6 +347,23 @@ export default {
             this.cancelModal()
           }
         }
+      })
+    },
+    createCustomerOptions() {
+      const req = getCustomers()
+      const customers = {}
+      return req.then(response => {
+        this.customerList = response.data.map(
+          function(item) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (!customers.hasOwnProperty(item.id)) {
+              customers[item.id] = []
+            }
+            customers[item.id] = item
+          }
+        )
+        this.customerList = customers
+        this.customerOptions = response.data
       })
     },
     openCreateModal() {
@@ -378,12 +416,12 @@ export default {
         }
         if (this.model.id === 0) {
           await postSubscriptions(form)
-          this.fetchData()
           notifyOptions.message = 'Create Successfully'
+          this.fetchData()
         } else {
           await putSubscriptions(this.model.id, form)
-          this.fetchData()
           notifyOptions.message = 'Update Successfully'
+          this.fetchData()
         }
         this.cancelModal()
         this.$notify(notifyOptions)
