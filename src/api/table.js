@@ -10,6 +10,9 @@ import request from '@/utils/request'
 /**
  * @typedef {import('@/models').SubscriptionModel} SubscriptionModel
  */
+/**
+ * @typedef {import('@/models').BillingSummaryModel} BillingSummaryModel
+ */
 
 export function getList(params) {
   return request({
@@ -115,6 +118,44 @@ export function putSubscriptions(id, data) {
 export function deleteSubscriptions(id) {
   return request({
     url: '/subscriptions/' + id,
+    method: 'delete'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<BillingSummaryModel[]>>}
+ */
+export function getBillingSummary() {
+  return request({
+    url: '/billing-summary/',
+    method: 'get'
+  })
+}
+
+/**
+ * @typedef {'percentile_mbps_98'} BillingSummaryUpdateColumn
+ */
+
+/**
+ * @param {number} id
+ * @param {Pick<BillingSummaryModel,BillingSummaryUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function putBillingSummary(id, data) {
+  return request({
+    url: '/billing-summary/' + id,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function deleteBillingSummary(id) {
+  return request({
+    url: '/billing-summary/' + id,
     method: 'delete'
   })
 }
