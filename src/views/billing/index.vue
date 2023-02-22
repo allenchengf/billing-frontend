@@ -45,22 +45,22 @@
       </el-table-column>
       <el-table-column label="98H%(bps)" width="120" :align="'center'">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
-          <span>{{ scope.row.percentile_98_h }}</span>
+          <span>{{ scope.row.percentile_98_h_show }}</span>
         </template>
       </el-table-column>
       <el-table-column label="98HM%(bps)" width="120" :align="'center'">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
-          <span>{{ scope.row.percentile_98_hm }}</span>
+          <span>{{ scope.row.percentile_98_hm_show }}</span>
         </template>
       </el-table-column>
       <el-table-column label="98%(bps)" width="120" :align="'center'">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
-          <span>{{ scope.row.percentile_98 }}</span>
+          <span>{{ scope.row.percentile_98_show }}</span>
         </template>
       </el-table-column>
       <el-table-column label="98M%(bps)" width="120" :align="'center'">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
-          <span>{{ scope.row.percentile_98_m }}</span>
+          <span>{{ scope.row.percentile_98_m_show }}</span>
         </template>
       </el-table-column>
       <el-table-column label="98%" width="80" :align="'center'">
@@ -281,6 +281,10 @@ export default {
       return req.then(response => {
         this.list = response.data
         this.list.forEach((item) => {
+          item['percentile_98_h_show'] = this.dealNumber(`${item['percentile_98_h'] == null ? 0 : item['percentile_98_h']}`)
+          item['percentile_98_hm_show'] = this.dealNumber(`${item['percentile_98_hm'] == null ? 0 : item['percentile_98_hm']}`)
+          item['percentile_98_show'] = this.dealNumber(`${item['percentile_98'] == null ? 0 : item['percentile_98']}`)
+          item['percentile_98_m_show'] = this.dealNumber(`${item['percentile_98_m'] == null ? 0 : item['percentile_98_m']}`)
           item['burst'] = this.dealNumber(`${item['percentile_mbps_98'] > item['cir'] ? item['percentile_mbps_98'] - item['cir'] : 0}`)
           item['billing_cycle'] = `${item['year']}-${this.right('0' + item['month'], 2)}`
           item['prefixes_show'] = item['prefixes'] == null ? '' : String(item['prefixes']).replace('[', '').replace(']', '').replaceAll(',', '\n')
