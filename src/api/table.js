@@ -13,6 +13,9 @@ import request from '@/utils/request'
 /**
  * @typedef {import('@/models').BillingSummaryModel} BillingSummaryModel
  */
+/**
+ * @typedef {import('@/models').BillingSummaryAggregatesModel} BillingSummaryAggregatesModel
+ */
 
 export function getList(params) {
   return request({
@@ -157,5 +160,15 @@ export function deleteBillingSummary(id) {
   return request({
     url: '/billing-summary/' + id,
     method: 'delete'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<BillingSummaryAggregatesModel[]>>}
+ */
+export function getBillingSummaryAggregates() {
+  return request({
+    url: '/billing-summary-aggregates/',
+    method: 'get'
   })
 }

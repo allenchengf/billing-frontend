@@ -73,6 +73,12 @@ export const constantRoutes = [
         name: 'Billing',
         component: () => import('@/views/billing/index'),
         meta: { title: 'Billing Summary' }
+      },
+      {
+        path: 'billing-summary-aggregates',
+        name: 'Billing Aggregates',
+        component: () => import('@/views/billingAggregates/index'),
+        meta: { title: 'Billing Summary - Aggregates' }
       }
     ]
   },
