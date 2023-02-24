@@ -270,9 +270,9 @@ export default {
     }
   },
   async created() {
-    this.createCustomerOptions()
-    this.fetchData()
-    this.init()
+    await this.createCustomerOptions()
+    await this.fetchData()
+    await this.init()
   },
   methods: {
     parseTime,
