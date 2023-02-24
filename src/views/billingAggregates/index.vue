@@ -1,8 +1,20 @@
 <template>
   <div class="app-container">
+
+    <div class="filter-container">
+      <div class="el-input" style="width: 200px;margin-right: 10px;">
+        <el-input
+          v-model="search"
+          placeholder="search"
+        >
+          <i slot="prefix" class="el-input__icon el-icon-search"/>
+        </el-input>
+      </div>
+    </div>
+
     <el-table
       v-loading="isLoading"
-      :data="displayList"
+      :data="tables"
       element-loading-text="Loading"
       :border="true"
       fit
@@ -164,6 +176,7 @@ export default {
   /** @type {() => ComponentData} */
   data() {
     return {
+      search: '',
       list: [],
       queue: [],
       page: defaultSettings.page,
@@ -187,6 +200,17 @@ export default {
     /** @return {number} */
     total() {
       return this.list.length
+    },
+    tables() {
+      const search = this.search
+      if (search) {
+        return this.displayList.filter(function(dataNews) {
+          return Object.keys(dataNews).some(function(key) {
+            return String(dataNews[key]).toLowerCase().indexOf(search.toLowerCase()) > -1
+          })
+        })
+      }
+      return this.displayList
     }
   },
   watch: {
