@@ -7,88 +7,89 @@
       :border="true"
       fit
       highlight-current-row
+      :default-sort="{prop: 'billing_cycle', order: 'descending'}"
     >
       <el-table-column :align="'center'" label="" width="60">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="Billing ID" width="120">
+      <el-table-column label="Billing ID" width="140" sortable prop="billing_id">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.row.billing_id }}
         </template>
       </el-table-column>
-      <el-table-column label="Charging Order" width="130">
+      <el-table-column label="Charging Order" width="150" sortable prop="order">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.row.order }}
         </template>
       </el-table-column>
-      <el-table-column label="Customer ID" width="120" :align="'center'">
+      <el-table-column label="Customer ID" width="150" :align="'center'" sortable prop="customer_id">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.row.customer_id }}
         </template>
       </el-table-column>
-      <el-table-column label="Service ID" width="120" :align="'center'">
+      <el-table-column label="Service ID" width="120" :align="'center'" sortable prop="service_id">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.row.service_id }}
         </template>
       </el-table-column>
-      <el-table-column label="Billing Cycle" width="120" :align="'center'">
+      <el-table-column label="Billing Cycle" width="150" :align="'center'" sortable prop="billing_cycle">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.row.billing_cycle }}
         </template>
       </el-table-column>
-      <el-table-column label="Prefix for Charging" width="160" :align="'center'">
+      <el-table-column label="Prefix for Charging" width="180" :align="'center'" sortable prop="prefixes_show">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.row.prefixes_show }}
         </template>
       </el-table-column>
-      <el-table-column label="98H%(bps)" width="120" :align="'center'">
+      <el-table-column label="98H%(bps)" width="140" :align="'center'" sortable prop="percentile_98_h_show">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.percentile_98_h_show }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="98HM%(bps)" width="120" :align="'center'">
+      <el-table-column label="98HM%(bps)" width="140" :align="'center'" sortable prop="percentile_98_hm_show">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.percentile_98_hm_show }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="98%(bps)" width="120" :align="'center'">
+      <el-table-column label="98%(bps)" width="140" :align="'center'" sortable prop="percentile_98_show">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.percentile_98_show }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="98M%(bps)" width="120" :align="'center'">
+      <el-table-column label="98M%(bps)" width="140" :align="'center'" sortable prop="percentile_98_m_show">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.percentile_98_m_show }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="98%" width="80" :align="'center'">
+      <el-table-column label="98%" width="140" :align="'center'" sortable prop="percentile_mbps_98">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.percentile_mbps_98 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="CIR" width="80" :align="'center'">
+      <el-table-column label="CIR" width="80" :align="'center'" sortable prop="cir">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.cir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="PIR" width="80" :align="'center'">
+      <el-table-column label="PIR" width="80" :align="'center'" sortable prop="pir">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.pir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Excess Burst" width="80" :align="'center'">
+      <el-table-column label="Excess Burst" width="140" :align="'center'" sortable prop="burst">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.burst }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Sales Tag" width="80" :align="'center'">
+      <el-table-column label="Sales Tag" width="120" :align="'center'" sortable prop="sales_tag">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <span>{{ scope.row.sales_tag }}</span>
         </template>
       </el-table-column>
-      <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200">
+      <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200" sortable>
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <i class="el-icon-time" />
           <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD HH:mm:ss') }}</span>

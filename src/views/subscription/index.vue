@@ -14,44 +14,45 @@
       :border="true"
       fit
       highlight-current-row
+      :default-sort="{prop: 'service_id', order: 'descending'}"
     >
       <el-table-column :align="'center'" label="" width="60">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="Product Name" width="120">
+      <el-table-column label="Product Name" width="150" sortable prop="product">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           {{ scope.row.product }}
         </template>
       </el-table-column>
-      <el-table-column label="Service ID" width="120" :align="'center'">
+      <el-table-column label="Service ID" width="120" :align="'center'" sortable prop="service_id">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           {{ scope.row.service_id }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="120" :align="'center'">
+      <el-table-column class-name="status-col" label="Status" width="120" :align="'center'" sortable prop="status">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <el-tag :type="statusType(scope.row.status)">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Customer ID" width="120" :align="'center'">
+      <el-table-column label="Customer ID" width="150" :align="'center'" sortable prop="customer">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           {{ scope.row.customer }}
         </template>
       </el-table-column>
-      <el-table-column label="Description">
+      <el-table-column label="Description" sortable prop="description">
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column :align="'center'" prop="created_at" label="Created At" width="200">
+      <el-table-column :align="'center'" prop="created_at" label="Created At" width="200" sortable>
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <i class="el-icon-time" />
           <span>{{ parseTime(scope.row.created_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200">
+      <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200" sortable>
         <template #default="/** @type {ElTableScope<SubscriptionModel>} */scope">
           <i class="el-icon-time" />
           <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
