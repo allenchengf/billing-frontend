@@ -82,6 +82,13 @@
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
+      &>span {
+        text-overflow: ellipsis;
+        width: 160px;
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+      }
       min-width: $sideBarWidth !important;
       background-color: $subMenuBg !important;
 

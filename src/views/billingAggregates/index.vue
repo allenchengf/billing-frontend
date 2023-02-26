@@ -7,12 +7,9 @@
           v-model="search"
           placeholder="search"
         >
-          <i slot="prefix" class="el-input__icon el-icon-search" />
+          <i slot="prefix" class="el-input__icon el-icon-search"/>
         </el-input>
       </div>
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateModal">
-        Add
-      </el-button>
     </div>
 
     <el-table
@@ -22,82 +19,82 @@
       :border="true"
       fit
       highlight-current-row
-      :default-sort="{prop: 'customer_id', order: 'descending'}"
+      :default-sort="{prop: 'billing_cycle', order: 'descending'}"
     >
       <el-table-column :align="'center'" label="" width="60">
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="Customer Name" width="170" sortable prop="customer_name">
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
-          {{ scope.row.customer_name }}
+      <el-table-column label="Billing Cycle" width="150" :align="'center'" sortable prop="billing_cycle">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          {{ scope.row.billing_cycle }}
         </template>
       </el-table-column>
-      <el-table-column label="Customer ID" width="170" :align="'center'" sortable prop="customer_id">
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
-          {{ scope.row.customer_id }}
+      <el-table-column label="Group Name" width="130" sortable prop="group_name">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          {{ scope.row.group_name }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="Customer Property" width="180" :align="'center'" sortable prop="customer_property">
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
-          <el-tag :type="statusType(scope.row.customer_property)">{{ scope.row.customer_property }}</el-tag>
+      <el-table-column label="Sequence" width="130" sortable prop="sequence">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          {{ scope.row.sequence }}
         </template>
       </el-table-column>
-      <el-table-column label="AM" width="120" :align="'center'" sortable prop="am">
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
-          {{ scope.row.am }}
+      <el-table-column label="Billing List" width="170" :align="'center'" sortable prop="prefixes_list_show">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          {{ scope.row.prefixes_list_show }}
         </template>
       </el-table-column>
-      <el-table-column label="Description" sortable prop="description">
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
-          <span>{{ scope.row.description }}</span>
+      <el-table-column label="98H%(bps)" width="140" :align="'center'" sortable prop="percentile_98_h_show">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          <span>{{ scope.row.percentile_98_h_show }}</span>
         </template>
       </el-table-column>
-      <el-table-column :align="'center'" prop="created_at" label="Created At" width="200" sortable>
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
-          <i class="el-icon-time" />
-          <span>{{ parseTime(scope.row.created_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
+      <el-table-column label="98HM%(bps)" width="140" :align="'center'" sortable prop="percentile_98_hm_show">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          <span>{{ scope.row.percentile_98_hm_show }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="98%(bps)" width="140" :align="'center'" sortable prop="percentile_98_show">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          <span>{{ scope.row.percentile_98_show }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="98M%(bps)" width="140" :align="'center'" sortable prop="percentile_98_m_show">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          <span>{{ scope.row.percentile_98_m_show }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="98%" width="80" :align="'center'" sortable prop="percentile_mbps_98">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+          <span>{{ scope.row.percentile_mbps_98 }}</span>
         </template>
       </el-table-column>
       <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200" sortable>
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
+        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           <i class="el-icon-time" />
           <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" :align="'center'" width="180" class-name="small-padding fixed-width">
-        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
-          <el-button type="primary" size="mini" @click="openUpdateModal(scope.row)">
-            Edit
-          </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleDelete(scope.row)">
-            Delete
-          </el-button>
-        </template>
+      <el-table-column label="Actions" :align="'center'" class-name="small-padding fixed-width">
+<!--        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">-->
+<!--          <el-button type="primary" size="mini" @click="openUpdateModal(scope.row)">-->
+<!--            Edit-->
+<!--          </el-button>-->
+<!--          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleDelete(scope.row)">-->
+<!--            Delete-->
+<!--          </el-button>-->
+<!--        </template>-->
       </el-table-column>
     </el-table>
 
     <pagination v-if="total > 0" :total="total" :page.sync="page" :limit.sync="perPage" @pagination="handleCurrentChange" />
 
-    <el-dialog title="Create Customer" :visible="dialog === 'create' || dialog === 'update'" @close="handleCancel">
+    <el-dialog title="Edit Billing Summary" :visible="dialog === 'create' || dialog === 'update'" @close="handleCancel">
       <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="160px" style="width: 400px; margin-left:50px;" @submit="onSubmit">
-        <el-form-item label="Customer Name" prop="customer_name">
-          <el-input v-model="model.customer_name" />
-        </el-form-item>
-        <el-form-item label="Customer ID" prop="customer_id">
-          <el-input v-model="model.customer_id" />
-        </el-form-item>
-        <el-form-item label="Customer Property" prop="customer_property">
-          <el-select v-model="model.customer_property" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in propertyOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="AM" prop="am">
-          <el-input v-model="model.am" />
-        </el-form-item>
-        <el-form-item label="Description" prop="description">
-          <el-input v-model="model.description" />
+        <el-form-item label="98%" prop="percentile_mbps_98">
+          <el-input v-model="model.percentile_mbps_98" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -117,7 +114,7 @@
 </template>
 
 <script>
-/** @typedef {import('@/models').CustomerModel} CustomerModel */
+/** @typedef {import('@/models').BillingSummaryModel} BillingSummaryModel */
 /** @template T @typedef {import('@/models').ElTableScope<T>} ElTableScope<T> */
 /** @template T @typedef {T extends Record<string, infer R> ? R : unknown} EnumValue */
 /** @typedef {import('@/types/validator').Rule} Rule */
@@ -125,78 +122,46 @@ import { isUndefined } from '@/utils/is'
 import { chunk } from '@/utils/helper'
 import { createNow, parseTime } from '@/utils/datetime'
 import {
-  getCustomers,
-  postCustomers,
-  putCustomers,
-  deleteCustomers
+  getBillingSummaryAggregates
 } from '@/api/table'
 import Pagination from '@/components/Pagination/index.vue'
 
 /**
  * @typedef {Object} ComponentData
- * @property {CustomerModel[]} list
+ * @property {BillingSummaryModel[]} list
  * @property {Promise<any>[]} queue
  * @property {number} total
  * @property {number} page
  * @property {number} perPage
  * @property {'' | 'create' | 'update'} dialog
- * @property {CustomerModel} model
- * @property {{ [ K in keyof CustomerModel]: Rule[] }} rules
+ * @property {BillingSummaryModel} model
+ * @property {{ [ K in keyof BillingSummaryModel]: Rule[] }} rules
  * @property {EnumValue<typeof PropertyOptions>[]} propertyOptions
  */
 
 /**
-  * @return {CustomerModel}
-  */
-function createDefaultCustomerModel() {
+ * @return {BillingSummaryModel}
+ */
+function createDefaultBillingSummaryModel() {
   return {
     id: 0,
-    customer_id: '',
-    customer_name: '',
-    customer_property: '',
-    am: '',
-    description: '',
+    percentile_mbps_98: '',
     created_at: createNow(),
     updated_at: createNow()
   }
 }
 
 /**
-  * @param {Partial<CustomerModel>} model
-  * @return {CustomerModel}
-  */
-function createCustomerModel(model) {
-  const defaultModel = createDefaultCustomerModel()
+ * @param {Partial<BillingSummaryModel>} model
+ * @return {BillingSummaryModel}
+ */
+function createBillingSummaryModel(model) {
+  const defaultModel = createDefaultBillingSummaryModel()
   if (model) {
-    if (isUndefined(model.id)) model.id = defaultModel.id
-    if (isUndefined(model.customer_name)) model.customer_name = defaultModel.customer_name
-    if (isUndefined(model.customer_id)) model.customer_id = defaultModel.customer_id
-    if (isUndefined(model.customer_property)) model.customer_property = defaultModel.customer_property
-    if (isUndefined(model.am)) model.am = defaultModel.am
-    if (isUndefined(model.description)) model.description = defaultModel.description
-    if (isUndefined(model.created_at)) model.created_at = defaultModel.created_at
-    if (isUndefined(model.updated_at)) model.updated_at = defaultModel.updated_at
+    if (isUndefined(model.percentile_mbps_98)) model.percentile_mbps_98 = defaultModel.percentile_mbps_98
     return model
   }
   return defaultModel
-}
-
-const statusMap = {
-  Presales: 'success',
-  Existing: 'gray',
-  Terminated: 'danger'
-}
-
-/**
- * @enum {string}
- */
-const PropertyOptions = {
-  /** @type {'Property1'} */
-  PROD1: 'Presales',
-  /** @type {'Property2'} */
-  PROD2: 'Existing',
-  /** @type {'Property3'} */
-  PROD3: 'Terminated'
 }
 
 const defaultSettings = {
@@ -217,14 +182,10 @@ export default {
       page: defaultSettings.page,
       perPage: defaultSettings.perPage,
       dialog: '',
-      model: createDefaultCustomerModel(),
+      model: createDefaultBillingSummaryModel(),
       rules: {
-        customer_name: [{ required: true }],
-        customer_id: [{ required: true }],
-        customer_property: [{ required: true }],
-        description: [{ required: false }]
-      },
-      propertyOptions: Object.values(PropertyOptions)
+        percentile_mbps_98: [{ required: false }]
+      }
     }
   },
   computed: {
@@ -232,7 +193,7 @@ export default {
     isLoading() {
       return this.queue.length
     },
-    /** @return {CustomerModel[]} */
+    /** @return {BillingSummaryModel[]} */
     displayList() {
       return chunk(this.list, this.perPage)[this.page - 1]
     },
@@ -283,13 +244,6 @@ export default {
       }
     },
     /**
-     * @param {keyof typeof statusMap} status
-     * @return {string}
-     */
-    statusType(status) {
-      return statusMap[status]
-    },
-    /**
      * @param {Promise<any>} req
      */
     addQueue(req) {
@@ -315,10 +269,18 @@ export default {
      * @return {Promise<void>}
      */
     fetchData() {
-      const req = getCustomers()
+      const req = getBillingSummaryAggregates()
       this.addQueue(req)
       return req.then(response => {
         this.list = response.data
+        this.list.forEach((item) => {
+          item['percentile_98_h_show'] = this.dealNumber(`${item['percentile_98_h'] == null ? 0 : item['percentile_98_h']}`)
+          item['percentile_98_hm_show'] = this.dealNumber(`${item['percentile_98_hm'] == null ? 0 : item['percentile_98_hm']}`)
+          item['percentile_98_show'] = this.dealNumber(`${item['percentile_98'] == null ? 0 : item['percentile_98']}`)
+          item['percentile_98_m_show'] = this.dealNumber(`${item['percentile_98_m'] == null ? 0 : item['percentile_98_m']}`)
+          item['billing_cycle'] = `${item['year']}-${this.right('0' + item['month'], 2)}`
+          item['prefixes_list_show'] = item['billing_list'] == null ? '' : String(item['billing_list']).replace('[', '').replace(']', '').replaceAll(',', '\n')
+        })
         this.removeQueue(req)
       }).then(() => {
         const { query } = this.$route
@@ -326,12 +288,28 @@ export default {
           const id = Number(query.id)
           const model = this.list.find((p) => id === p.id)
           if (model) {
-            this.model = createCustomerModel(model)
+            this.model = createBillingSummaryModel(model)
           } else {
             this.cancelModal()
           }
         }
       })
+    },
+    dealNumber(money) {
+      if (money && money !== 'null') {
+        money = String(money)
+        const left = money.split('.')[0]; let right = money.split('.')[1]
+        right = right ? (right.length >= 2 ? '.' + right.substr(0, 2) : '.' + right + '0') : ''
+        const temp = left.split('').reverse().join('').match(/(\d{1,3})/g)
+        return (Number(money) < 0 ? '-' : '') + temp.join(',').split('').reverse().join('') + right
+      } else if (money === 0) {
+        return '0'
+      } else {
+        return ''
+      }
+    },
+    right(str, num) {
+      return str.substring(str.length-num,str.length)
     },
     openCreateModal() {
       this.$router.push({ ...this.$route, query: {
@@ -340,10 +318,10 @@ export default {
       }})
     },
     /**
-     * @param {CustomerModel} row
+     * @param {BillingSummaryModel} row
      */
     openUpdateModal(row) {
-      this.model = createCustomerModel(row)
+      this.model = createBillingSummaryModel(row)
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
         dialog: 'update',
@@ -351,7 +329,7 @@ export default {
       }})
     },
     cancelModal() {
-      this.model = createCustomerModel()
+      this.model = createBillingSummaryModel()
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
         id: undefined,
@@ -359,7 +337,7 @@ export default {
       }})
     },
     handleCancel() {
-      this.model = createCustomerModel()
+      this.model = createBillingSummaryModel()
       this.$router.push({ ...this.$route, query: {
         ...this.$route.query,
         id: undefined,
@@ -368,11 +346,7 @@ export default {
     },
     async handleSubmit() {
       const form = {
-        customer_name: this.model.customer_name,
-        customer_id: this.model.customer_id,
-        customer_property: this.model.customer_property,
-        am: this.model.am,
-        description: this.model.description
+        percentile_mbps_98: this.model.percentile_mbps_98
       }
       try {
         const notifyOptions = {
@@ -381,15 +355,9 @@ export default {
           type: 'success',
           duration: 2000
         }
-        if (this.model.id === 0) {
-          await postCustomers(form)
-          this.fetchData()
-          notifyOptions.message = 'Create Successfully'
-        } else {
-          await putCustomers(this.model.id, form)
-          this.fetchData()
-          notifyOptions.message = 'Update Successfully'
-        }
+        await putBillingSummary(this.model.id, form)
+        this.fetchData()
+        notifyOptions.message = 'Update Successfully'
         this.cancelModal()
         this.$notify(notifyOptions)
       } catch (error) {
@@ -412,7 +380,7 @@ export default {
       })
     },
     /**
-     * @param {CustomerModel} row
+     * @param {BillingSummaryModel} row
      */
     handleDelete(row) {
       this.$confirm('Are you sure you want to delete this?', 'confirm', {
@@ -420,7 +388,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        return deleteCustomers(row.id)
+        return deleteBillingSummary(row.id)
           .then(() => {
             this.cancelModal()
             this.fetchData()
@@ -447,5 +415,13 @@ export default {
 <style lang="scss">
 .filter-container {
   margin-bottom: 16px;
+}
+
+.app-container{
+  .el-table{
+    .cell {
+      white-space: pre-line;
+    }
+  }
 }
 </style>

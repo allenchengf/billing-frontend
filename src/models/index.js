@@ -44,7 +44,7 @@
  * @property {string} updated_at
  */
 /**
- * @typedef {Object} BillingModel
+ * @typedef {Object} BillingSummaryModel
  * @property {number} id
  * @property {number} customer_id customer
  * @property {string} service_id subscription

@@ -10,6 +10,12 @@ import request from '@/utils/request'
 /**
  * @typedef {import('@/models').SubscriptionModel} SubscriptionModel
  */
+/**
+ * @typedef {import('@/models').BillingSummaryModel} BillingSummaryModel
+ */
+/**
+ * @typedef {import('@/models').BillingSummaryAggregatesModel} BillingSummaryAggregatesModel
+ */
 
 export function getList(params) {
   return request({
@@ -120,35 +126,27 @@ export function deleteSubscriptions(id) {
 }
 
 /**
- * @returns {Promise<ResponseInfo<import('@/models').BillingModel[]>>}
+ * @returns {Promise<ResponseInfo<BillingSummaryModel[]>>}
  */
-export function getBilling() {
+export function getBillingSummary() {
   return request({
-    url: '/billing/',
+    url: '/billing-summary/',
     method: 'get'
   })
 }
 
 /**
- * @param {Pick<BillingModel,''>} data
- * @returns {Promise<ResponseInfo<null>>}
+ * @typedef {'percentile_mbps_98'} BillingSummaryUpdateColumn
  */
-export function postBilling(data) {
-  return request({
-    url: '/billing/',
-    method: 'post',
-    data
-  })
-}
 
 /**
  * @param {number} id
- * @param {Pick<BillingModel,''>} data
+ * @param {Pick<BillingSummaryModel,BillingSummaryUpdateColumn>} data
  * @returns {Promise<ResponseInfo<null>>}
  */
-export function putBilling(id, data) {
+export function putBillingSummary(id, data) {
   return request({
-    url: '/billing/' + id,
+    url: '/billing-summary/' + id,
     method: 'put',
     data
   })
@@ -158,9 +156,19 @@ export function putBilling(id, data) {
  * @param {number} id
  * @returns {Promise<ResponseInfo<null>>}
  */
-export function deleteBilling(id) {
+export function deleteBillingSummary(id) {
   return request({
-    url: '/billing/' + id,
+    url: '/billing-summary/' + id,
     method: 'delete'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<BillingSummaryAggregatesModel[]>>}
+ */
+export function getBillingSummaryAggregates() {
+  return request({
+    url: '/billing-summary-aggregates/',
+    method: 'get'
   })
 }
