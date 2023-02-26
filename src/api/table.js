@@ -118,3 +118,49 @@ export function deleteSubscriptions(id) {
     method: 'delete'
   })
 }
+
+/**
+ * @returns {Promise<ResponseInfo<import('@/models').BillingModel[]>>}
+ */
+export function getBilling() {
+  return request({
+    url: '/billing/',
+    method: 'get'
+  })
+}
+
+/**
+ * @param {Pick<BillingModel,''>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function postBilling(data) {
+  return request({
+    url: '/billing/',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @param {Pick<BillingModel,''>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function putBilling(id, data) {
+  return request({
+    url: '/billing/' + id,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function deleteBilling(id) {
+  return request({
+    url: '/billing/' + id,
+    method: 'delete'
+  })
+}

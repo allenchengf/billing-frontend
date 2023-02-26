@@ -47,11 +47,11 @@ module.exports = [
     type: 'get',
     response: config => {
       const headers = rawHeadersToJson(config.rawHeaders)
-      const token = headers['Authentication']
+      const token = headers['Authorization']
       if (token) {
         return {
           code: 20000,
-          data: users[token]
+          data: users[token.split(' ')[1]]
         }
       } else {
         return {
