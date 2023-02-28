@@ -16,6 +16,12 @@ import request from '@/utils/request'
 /**
  * @typedef {import('@/models').BillingSummaryAggregatesModel} BillingSummaryAggregatesModel
  */
+/**
+ * @typedef {import('@/models').BillingAggregateSettingModel} BillingAggregateSettingModel
+ */
+/**
+ * @typedef {import('@/models').BillingSettingsModel} BillingSettingsModel
+ */
 
 export function getList(params) {
   return request({
@@ -169,6 +175,66 @@ export function deleteBillingSummary(id) {
 export function getBillingSummaryAggregates() {
   return request({
     url: '/billing-summary-aggregates/',
+    method: 'get'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<BillingAggregateSettingModel[]>>}
+ */
+export function getBillingAggregateSettings() {
+  return request({
+    url: '/billing-setting-aggregates/',
+    method: 'get'
+  })
+}
+
+/**
+ * @typedef {'group_name'|'billing_list'|'cir'|'pir'|'permanent'} BillingAggregateSettingUpdateColumn
+ */
+
+/**
+ * @param {Pick<BillingAggregateSettingModel,BillingAggregateSettingUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function postBillingAggregateSettings(data) {
+  return request({
+    url: '/billing-setting-aggregates/',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @param {Pick<BillingAggregateSettingModel,BillingAggregateSettingUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function putBillingAggregateSettings(id, data) {
+  return request({
+    url: '/billing-setting-aggregates/' + id,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function deleteBillingAggregateSettings(id) {
+  return request({
+    url: '/billing-setting-aggregates/' + id,
+    method: 'delete'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<BillingSettingsModel[]>>}
+ */
+export function getBillingSettings() {
+  return request({
+    url: '/billing-settings/',
     method: 'get'
   })
 }

@@ -69,16 +69,22 @@ export const constantRoutes = [
         meta: { title: 'Billing Setting' }
       },
       {
+        path: 'billing-aggregates-setting',
+        name: 'Billing Aggregates Setting',
+        component: () => import('@/views/billingAggregateSetting/index'),
+        meta: { title: 'Billing Aggregates Setting' }
+      },
+      {
         path: 'billing-summary',
         name: 'Billing',
         component: () => import('@/views/billing/index'),
         meta: { title: 'Billing Summary' }
       },
       {
-        path: 'billing-summary-aggregates',
+        path: 'billing-aggregates-summary',
         name: 'Billing Aggregates',
         component: () => import('@/views/billingAggregates/index'),
-        meta: { title: 'Billing Summary - Aggregates' }
+        meta: { title: 'Billing Aggregates Summary' }
       }
     ]
   },
