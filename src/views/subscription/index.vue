@@ -6,7 +6,7 @@
           v-model="search"
           placeholder="search"
         >
-          <i slot="prefix" class="el-input__icon el-icon-search"/>
+          <i slot="prefix" class="el-input__icon el-icon-search" />
         </el-input>
       </div>
       <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateModal">

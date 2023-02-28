@@ -14,7 +14,16 @@ import request from '@/utils/request'
  * @typedef {import('@/models').BillingSummaryModel} BillingSummaryModel
  */
 /**
+ * @typedef {import('@/models').BillingModel} BillingModel
+ */
+/**
  * @typedef {import('@/models').BillingSummaryAggregatesModel} BillingSummaryAggregatesModel
+ */
+/**
+ * @typedef {import('@/models').Channels} Channels
+ */
+/**
+ * @typedef {import('@/models').SensorModel} SensorModel
  */
 
 export function getList(params) {
@@ -125,6 +134,54 @@ export function deleteSubscriptions(id) {
   })
 }
 
+/** @typedef {''} BillingUpdateColumn */
+
+/**
+ * @returns {Promise<ResponseInfo<BillingModel[]>>}
+ */
+export function getBilling() {
+  return request({
+    url: '/billing/',
+    method: 'get'
+  })
+}
+
+/**
+ * @param {Pick<BillingModel,BillingUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function postBilling(data) {
+  return request({
+    url: '/billing/',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @param {Pick<BillingModel,BillingUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function putBilling(id, data) {
+  return request({
+    url: '/billing/' + id,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function deleteBilling(id) {
+  return request({
+    url: '/billing/' + id,
+    method: 'delete'
+  })
+}
+
 /**
  * @returns {Promise<ResponseInfo<BillingSummaryModel[]>>}
  */
@@ -169,6 +226,26 @@ export function deleteBillingSummary(id) {
 export function getBillingSummaryAggregates() {
   return request({
     url: '/billing-summary-aggregates/',
+    method: 'get'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<SensorModel[]>>}
+ */
+export function getSensors() {
+  return request({
+    url: '/sensors/',
+    method: 'get'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<Channels>>}
+ */
+export function getChannels() {
+  return request({
+    url: '/channels/',
     method: 'get'
   })
 }

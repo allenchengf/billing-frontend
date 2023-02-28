@@ -7,7 +7,7 @@
           v-model="search"
           placeholder="search"
         >
-          <i slot="prefix" class="el-input__icon el-icon-search"/>
+          <i slot="prefix" class="el-input__icon el-icon-search" />
         </el-input>
       </div>
     </div>
@@ -78,14 +78,14 @@
         </template>
       </el-table-column>
       <el-table-column label="Actions" :align="'center'" class-name="small-padding fixed-width">
-<!--        <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">-->
-<!--          <el-button type="primary" size="mini" @click="openUpdateModal(scope.row)">-->
-<!--            Edit-->
-<!--          </el-button>-->
-<!--          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleDelete(scope.row)">-->
-<!--            Delete-->
-<!--          </el-button>-->
-<!--        </template>-->
+        <!-- <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
+         <el-button type="primary" size="mini" @click="openUpdateModal(scope.row)">
+           Edit
+         </el-button>
+         <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleDelete(scope.row)">
+           Delete
+         </el-button>
+       </template> -->
       </el-table-column>
     </el-table>
 
@@ -122,7 +122,9 @@ import { isUndefined } from '@/utils/is'
 import { chunk } from '@/utils/helper'
 import { createNow, parseTime } from '@/utils/datetime'
 import {
-  getBillingSummaryAggregates
+  getBillingSummaryAggregates,
+  putBillingSummary,
+  deleteBillingSummary
 } from '@/api/table'
 import Pagination from '@/components/Pagination/index.vue'
 
@@ -309,7 +311,7 @@ export default {
       }
     },
     right(str, num) {
-      return str.substring(str.length-num,str.length)
+      return str.substring(str.length - num, str.length)
     },
     openCreateModal() {
       this.$router.push({ ...this.$route, query: {
