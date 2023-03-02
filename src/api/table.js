@@ -14,15 +14,23 @@ import request from '@/utils/request'
  * @typedef {import('@/models').BillingSummaryModel} BillingSummaryModel
  */
 /**
+ * @typedef {import('@/models').BillingModel} BillingModel
+ */
+/**
  * @typedef {import('@/models').BillingSummaryAggregatesModel} BillingSummaryAggregatesModel
  */
 /**
- * @typedef {import('@/models').BillingAggregateSettingModel} BillingAggregateSettingModel
+ * @typedef {import('@/models').Channels} Channels
  */
 /**
- * @typedef {import('@/models').BillingSettingsModel} BillingSettingsModel
+ * @typedef {import('@/models').SensorModel} SensorModel
  */
-
+/**
+* @typedef {import('@/models').BillingAggregateSettingModel} BillingAggregateSettingModel
+ */
+/**
+* @typedef {import('@/models').BillingSettingsModel} BillingSettingsModel
+ */
 export function getList(params) {
   return request({
     url: '/vue-admin-template/table/list',
@@ -131,6 +139,54 @@ export function deleteSubscriptions(id) {
   })
 }
 
+/** @typedef {'customer_id'|'service_id'|'billing_id'|'cir'|'pir'|'provisioned_at'|'terminated_at'|'sensors'} BillingUpdateColumn */
+
+/**
+ * @returns {Promise<ResponseInfo<BillingModel[]>>}
+ */
+export function getBilling() {
+  return request({
+    url: '/billing-settings/',
+    method: 'get'
+  })
+}
+
+/**
+ * @param {Pick<BillingModel,BillingUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function postBilling(data) {
+  return request({
+    url: '/billing-settings/',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @param {Pick<BillingModel,BillingUpdateColumn>} data
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function putBilling(id, data) {
+  return request({
+    url: '/billing-settings/' + id,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<ResponseInfo<null>>}
+ */
+export function deleteBilling(id) {
+  return request({
+    url: '/billing-settings/' + id,
+    method: 'delete'
+  })
+}
+
 /**
  * @returns {Promise<ResponseInfo<BillingSummaryModel[]>>}
  */
@@ -175,6 +231,26 @@ export function deleteBillingSummary(id) {
 export function getBillingSummaryAggregates() {
   return request({
     url: '/billing-summary-aggregates/',
+    method: 'get'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<SensorModel[]>>}
+ */
+export function getSensors() {
+  return request({
+    url: '/sensors/',
+    method: 'get'
+  })
+}
+
+/**
+ * @returns {Promise<ResponseInfo<Channels>>}
+ */
+export function getChannels() {
+  return request({
+    url: '/channels/',
     method: 'get'
   })
 }
@@ -226,15 +302,5 @@ export function deleteBillingAggregateSettings(id) {
   return request({
     url: '/billing-setting-aggregates/' + id,
     method: 'delete'
-  })
-}
-
-/**
- * @returns {Promise<ResponseInfo<BillingSettingsModel[]>>}
- */
-export function getBillingSettings() {
-  return request({
-    url: '/billing-settings/',
-    method: 'get'
   })
 }

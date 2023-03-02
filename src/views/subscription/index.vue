@@ -6,7 +6,7 @@
           v-model="search"
           placeholder="search"
         >
-          <i slot="prefix" class="el-input__icon el-icon-search"/>
+          <i slot="prefix" class="el-input__icon el-icon-search" />
         </el-input>
       </div>
       <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateModal">
@@ -156,8 +156,8 @@ import Pagination from '@/components/Pagination/index.vue'
  */
 
 /**
-  * @return {SubscriptionModel}
-  */
+ * @return {SubscriptionModel}
+ */
 function createDefaultSubscriptionModel() {
   return {
     id: 0,
@@ -172,9 +172,9 @@ function createDefaultSubscriptionModel() {
 }
 
 /**
-  * @param {Partial<SubscriptionModel>} model
-  * @return {SubscriptionModel}
-  */
+ * @param {Partial<SubscriptionModel>} model
+ * @return {SubscriptionModel}
+ */
 function createSubscriptionModel(model) {
   const defaultModel = createDefaultSubscriptionModel()
   if (model) {

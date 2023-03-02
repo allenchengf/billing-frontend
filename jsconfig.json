@@ -10,8 +10,7 @@
     "moduleResolution": "node"
   },
   "vueCompilerOptions": {
-    "target": 2,
-    "plugins": ["@volar/vue-language-plugin-pug"]
+    "target": 2
   },
   "include": ["./types/**/*", "./src/**/*", "./tests/**/*", "mock/**/*"],
   "exclude": ["node_modules", "dist"]

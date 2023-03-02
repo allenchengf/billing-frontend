@@ -7,7 +7,7 @@
           v-model="search"
           placeholder="search"
         >
-          <i slot="prefix" class="el-input__icon el-icon-search"/>
+          <i slot="prefix" class="el-input__icon el-icon-search" />
         </el-input>
       </div>
     </div>
@@ -342,7 +342,7 @@ export default {
       }
     },
     right(str, num) {
-      return str.substring(str.length-num,str.length)
+      return str.substring(str.length - num, str.length)
     },
     openCreateModal() {
       this.$router.push({ ...this.$route, query: {

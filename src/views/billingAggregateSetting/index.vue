@@ -88,16 +88,16 @@
         <el-form-item label="Billing List" prop="billing_list">
           <el-select v-model="model.billing_list" filterable placeholder="Please select">
             <el-option
-                v-for="item in billingSettingOptions"
-                :key="item.id"
-                :label="item.billing_id"
-                :value="item.id"
+              v-for="item in billingSettingOptions"
+              :key="item.id"
+              :label="item.billing_id"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
-<!--        <el-form-item label="Billing_List" prop="billing_list">-->
-<!--          <el-input v-model="model.billing_list" />-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="Billing_List" prop="billing_list">-->
+        <!--          <el-input v-model="model.billing_list" />-->
+        <!--        </el-form-item>-->
         <el-form-item label="Cir" prop="cir">
           <el-input v-model="model.cir" />
         </el-form-item>
@@ -139,7 +139,7 @@ import {
   postBillingAggregateSettings,
   putBillingAggregateSettings,
   deleteBillingAggregateSettings,
-  getBillingSettings
+  getBilling
 } from '@/api/table'
 import Pagination from '@/components/Pagination/index.vue'
 
@@ -335,7 +335,7 @@ export default {
       })
     },
     createBillingSettingOptions() {
-      const req = getBillingSettings()
+      const req = getBilling()
       const billingsettings = {}
       return req.then(response => {
         this.customerList = response.data.map(
