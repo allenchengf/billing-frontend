@@ -65,13 +65,13 @@
       <el-table-column :align="'center'" prop="created_at" label="Created At" width="200">
         <template #default="/** @type {ElTableScope<PageModel>} */scope">
           <i class="el-icon-time" />
-          <span>{{ parseTime(scope.row.provision_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
+          <span>{{ parseTime(scope.row.created_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column :align="'center'" prop="updated_at" label="Updated At" width="200">
         <template #default="/** @type {ElTableScope<PageModel>} */scope">
           <i class="el-icon-time" />
-          <span>{{ parseTime(scope.row.terminated_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
+          <span>{{ parseTime(scope.row.updated_at, 'YYYY/MM/DD HH:mm:ss') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" :align="'center'" width="180" class-name="small-padding fixed-width">
@@ -88,10 +88,10 @@
 
     <pagination v-if="total > 0" :total="total" :page.sync="page" :limit.sync="perPage" @pagination="handleCurrentChange" />
 
-    <el-dialog :key="model.id" title="Billing Setting" :visible="isDialogVisible" @close="handleCancel">
+    <el-dialog :key="model.id" title="Billing Setting" :visible="isDialogVisible" custom-class="customWidth" @close="handleCancel">
       <div>
         <div v-if="dialog === 'edit'" key="edit">
-          <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="120px" style="width: 400px; margin-left:48px;" @submit="onSubmit">
+          <el-form ref="form" :rules="rules" :model="model" label-position="left" label-width="120px" style="width: 1000px; margin-left:48px;" @submit="onSubmit">
             <el-form-item label="Customer" prop="customer_id">
               <el-select v-model="model.customer_id" filterable placeholder="Please select">
                 <el-option key="0" :value="0" label="Please select" disabled />
@@ -115,13 +115,19 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Billing ID" prop="billing_id">
-              <el-input v-model="model.billing_id" />
+              <el-col :span="7">
+                <el-input v-model="model.billing_id" />
+              </el-col>
             </el-form-item>
             <el-form-item label="PIR" prop="pir">
-              <el-input v-model="model.pir" />
+              <el-col :span="7">
+                <el-input v-model="model.pir" />
+              </el-col>
             </el-form-item>
             <el-form-item label="CIR" prop="cir">
-              <el-input v-model="model.cir" />
+              <el-col :span="7">
+                <el-input v-model="model.cir" />
+              </el-col>
             </el-form-item>
             <el-form-item label="Provision At" prop="provision_at">
               <el-date-picker
@@ -137,32 +143,19 @@
                 placeholder="Select date time."
               />
             </el-form-item>
-            <el-form-item label="Sensors" prop="sensors">
-              <el-col :span="4">{{ model.sensors.length }}</el-col>
-              <el-col :span="20">
-                <el-button @click="openSensorsModal(model)">Edit Sensors</el-button>
-              </el-col>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div v-if="dialog === 'sensors'" key="sensors">
-          <ul style="margin: 0 24px">
-            <li v-for="sensor in model.sensors" :key="sensor.sensor_id">
-              <div style="font-size: 16px; margin: 8px 0;">{{ getSensorById(sensor.sensor_id).name }}</div>
-              <ul>
-                <li v-for="prefix in sensor.prefix_list" :key="prefix" class="font-medium">
-                  {{ prefix }}
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <el-form ref="sensorForm" :model="sensorChannel" label-position="left" label-width="100px" style="width: 400px; margin: 16px 48px -24px;">
-            <el-form-item label="Sensor" prop="sensor_id">
+            <el-divider/>
+            <el-row>
+              <el-col :span="6" style="font-weight: 700;margin-bottom: 10px"><div class="grid-content" />Sensor</el-col>
+              <el-col :span="6" style="font-weight: 700;"><div class="grid-content" />Channel</el-col>
+              <el-col :span="6" style="font-weight: 700;"><div class="grid-content" />Prefix</el-col>
+              <el-col :span="6" style="font-weight: 700;"><div class="grid-content" />Action</el-col>
+            </el-row>
+            <el-form-item v-for="sensor in model.sensors" :key="sensor.id" class="sensor_form" label-width="0px">
               <el-select
-                v-model="sensorChannel.sensor_id"
+                v-model="sensor.sensor_id"
                 filterable
                 placeholder="Please select"
-                @change="onChangeSensor"
+                style="width: 240px;margin-right: 5px"
               >
                 <el-option key="0" :value="0" label="Please select" disabled />
                 <el-option
@@ -172,17 +165,37 @@
                   :value="item.sensor_id"
                 />
               </el-select>
-            </el-form-item>
-            <el-form-item label="Channels" prop="sensor_id">
-              <el-select v-model="sensorChannel.prefix" multiple filterable placeholder="Please select">
+              <el-select
+                v-model="sensor.channel_list"
+                multiple
+                filterable
+                placeholder="Please select"
+                style="width: 250px;margin-right: 5px"
+              >
                 <el-option key="0" :value="0" label="Please select" disabled />
                 <el-option
-                  v-for="item in channelOptions"
+                  v-for="item in channelOptions[sensor.sensor_id]"
                   :key="item"
                   :label="item"
                   :value="item"
                 />
               </el-select>
+              <el-select
+                v-model="sensor.prefix_list"
+                multiple
+                filterable
+                placeholder="Please select"
+                style="width: 250px;margin-right: 5px"
+              >
+                <el-option key="0" :value="0" label="Please select" disabled />
+                <el-option
+                  v-for="item in prefixOptions[sensor.sensor_id]"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+              <el-button @click="openSensorsModal(model)">Edit Sensors</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -210,7 +223,17 @@
 /** @typedef {import('@/models').Channels} Channels */
 /** @template T @typedef {import('@/types/element-ui').ElTableScope<T>} ElTableScope<T> */
 /** @typedef {import('@/types/validator').Rule} Rule */
-import { getBilling, getCustomers, getSubscriptions, postBilling, putBilling, deleteBilling, getSensors, getChannels } from '@/api/table'
+import {
+  getBilling,
+  getCustomers,
+  getSubscriptions,
+  postBilling,
+  putBilling,
+  deleteBilling,
+  getSensors,
+  getChannels,
+  getPrefixes
+} from '@/api/table'
 import { isUndefined } from '@/utils/is'
 import { parseTime } from '@/utils/datetime'
 import { chunk, uniq, flatten } from '@/utils/helper'
@@ -230,8 +253,8 @@ function createDefaultModel() {
     customer_id: 0,
     service_id: '',
     billing_id: '',
-    cir: 0,
-    pir: 0,
+    cir: '',
+    pir: '',
     provision_at: null,
     terminated_at: null,
     sensors: []
@@ -324,6 +347,8 @@ export default {
       subscriptions: {},
       sensors: {},
       channels: {},
+      channelOptions: {},
+      prefixOptions: {},
       sensorChannel: createSensorChannel()
     }
   },
@@ -352,14 +377,6 @@ export default {
     sensorsOptions() {
       return Object.values(this.sensors)
     },
-    /** @return {string[]} */
-    channelOptions() {
-      const channels = this.channels[this.sensorChannel.sensor_id]
-      if (channels) {
-        return channels
-      }
-      return []
-    },
     /** @return {boolean} */
     isDialogVisible() {
       return Boolean(this.dialog)
@@ -378,12 +395,13 @@ export default {
     }
   },
   async created() {
-    this.fetchCustomers()
-    this.fetchSubscriptions()
-    this.fetchSensors()
-    this.fetchChannels()
-    this.fetchData()
-    this.init()
+    await this.fetchCustomers()
+    await this.fetchSubscriptions()
+    await this.fetchSensors()
+    await this.fetchChannels()
+    await this.fetchPrefixes()
+    await this.fetchData()
+    await this.init()
   },
   methods: {
     parseTime,
@@ -493,7 +511,14 @@ export default {
     fetchChannels() {
       return getChannels().then(response => {
         this.channels = response.data
+        this.channelOptions = response.data
+
         this.sensors = { ...this.sensors }
+      })
+    },
+    fetchPrefixes() {
+      return getPrefixes().then(response => {
+        this.prefixOptions = response.data
       })
     },
     openCreateModal() {
@@ -646,3 +671,11 @@ export default {
   }
 }
 </script>
+<style lang="scss" >
+.grid-content {
+  border-radius: 4px;
+}
+.customWidth {
+  width:60%;
+}
+</style>

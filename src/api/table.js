@@ -256,6 +256,16 @@ export function getChannels() {
 }
 
 /**
+ * @returns {Promise<ResponseInfo<Prefixes>>}
+ */
+export function getPrefixes() {
+  return request({
+    url: '/prefixes/',
+    method: 'get'
+  })
+}
+
+/**
  * @returns {Promise<ResponseInfo<BillingAggregateSettingModel[]>>}
  */
 export function getBillingAggregateSettings() {
