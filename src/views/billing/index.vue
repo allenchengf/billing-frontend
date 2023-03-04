@@ -10,6 +10,9 @@
           <i slot="prefix" class="el-input__icon el-icon-search" />
         </el-input>
       </div>
+      <el-button class="filter-item" type="primary" icon="el-icon-download">
+        Download
+      </el-button>
     </div>
 
     <el-table
@@ -21,6 +24,11 @@
       highlight-current-row
       :default-sort="{prop: 'billing_cycle', order: 'descending'}"
     >
+      <el-table-column label="Actions" :align="'center'" width="180" class-name="small-padding fixed-width">
+        <template #default="/** @type {ElTableScope<CustomerModel>} */scope">
+          <el-button type="primary" icon="el-icon-picture" />
+        </template>
+      </el-table-column>
       <el-table-column :align="'center'" label="" width="60">
         <template #default="/** @type {ElTableScope<BillingSummaryModel>} */scope">
           {{ scope.$index + 1 }}
