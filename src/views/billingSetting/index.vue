@@ -129,9 +129,9 @@
                 <el-input v-model="model.cir" />
               </el-col>
             </el-form-item>
-            <el-form-item label="Provision At" prop="provision_at">
+            <el-form-item label="Provision At" prop="provisioned_at">
               <el-date-picker
-                v-model="model.provision_at"
+                v-model="model.provisioned_at"
                 type="datetime"
                 placeholder="Select date time."
               />
@@ -143,25 +143,27 @@
                 placeholder="Select date time."
               />
             </el-form-item>
-            <el-divider/>
+            <el-divider />
             <el-row>
               <el-col :span="6" style="font-weight: 700;margin-bottom: 10px"><div class="grid-content" />Sensor</el-col>
               <el-col :span="6" style="font-weight: 700;"><div class="grid-content" />Channel</el-col>
               <el-col :span="6" style="font-weight: 700;"><div class="grid-content" />Prefix</el-col>
               <el-col :span="6" style="font-weight: 700;"><div class="grid-content" />Action</el-col>
             </el-row>
-            <el-form-item v-for="sensor in model.sensors" :key="sensor.id" class="sensor_form" label-width="0px">
+            <el-divider />
+            <el-form-item v-for="(sensor, index) in model.sensors" :key="sensor.id" class="sensor_form" label-width="0px">
               <el-select
                 v-model="sensor.sensor_id"
                 filterable
                 placeholder="Please select"
                 style="width: 240px;margin-right: 5px"
+                @change="onChangeSensor(index, sensor)"
               >
                 <el-option key="0" :value="0" label="Please select" disabled />
                 <el-option
                   v-for="item in sensorsOptions"
                   :key="item.sensor_id"
-                  :label="item.name"
+                  :label="item.show_name"
                   :value="item.sensor_id"
                 />
               </el-select>
@@ -195,7 +197,8 @@
                   :value="item"
                 />
               </el-select>
-              <el-button @click="openSensorsModal(model)">Edit Sensors</el-button>
+              <el-button @click="deleteSensor(index)">Delete</el-button>
+              <el-divider />
             </el-form-item>
           </el-form>
         </div>
@@ -255,7 +258,7 @@ function createDefaultModel() {
     billing_id: '',
     cir: '',
     pir: '',
-    provision_at: null,
+    provisioned_at: null,
     terminated_at: null,
     sensors: []
   }
@@ -274,7 +277,7 @@ function createModel(model) {
     if (isUndefined(model.pir)) model.pir = defaultModel.pir
     if (isUndefined(model.service_id)) model.service_id = defaultModel.service_id
     if (isUndefined(model.customer_id)) model.customer_id = defaultModel.customer_id
-    if (isUndefined(model.provision_at)) model.provision_at = defaultModel.provision_at
+    if (isUndefined(model.provisioned_at)) model.provisioned_at = defaultModel.provisioned_at
     if (isUndefined(model.terminated_at)) model.terminated_at = defaultModel.terminated_at
     if (isUndefined(model.sensors)) model.sensors = defaultModel.sensors
     return model
@@ -340,7 +343,7 @@ export default {
         customer_id: [{ required: true }],
         cir: [{ required: false }],
         pir: [{ required: false }],
-        provision_at: [{ required: false }],
+        provisioned_at: [{ required: false }],
         terminated_at: [{ required: false }]
       },
       customers: {},
@@ -375,6 +378,10 @@ export default {
     },
     /** @return {SensorModel[]} */
     sensorsOptions() {
+      const sensors = Object.values(this.sensors)
+      sensors.forEach((item) => {
+        item.show_name = '(' + item.sensor_id + ') ' + item.name
+      })
       return Object.values(this.sensors)
     },
     /** @return {boolean} */
@@ -591,7 +598,14 @@ export default {
     },
     async handleSubmit() {
       const form = {
-
+        customer_id: this.model.customer_id,
+        service_id: this.model.service_id,
+        billing_id: this.model.billing_id,
+        provisioned_at: this.model.provisioned_at,
+        terminated_at: this.model.terminated_at,
+        cir: this.model.cir,
+        pir: this.model.pir,
+        sensors: this.model.sensors
       }
       try {
         const notifyOptions = {
@@ -665,8 +679,12 @@ export default {
       console.log(this.sensors[sensor_id])
       return this.sensors[sensor_id]
     },
-    onChangeSensor() {
-      this.sensorChannel.prefix = []
+    onChangeSensor(index, item) {
+      this.model.sensors[index].channel_list = []
+      this.model.sensors[index].prefix_list = []
+    },
+    deleteSensor(index) {
+      this.model.sensors.splice(index, 1)
     }
   }
 }
