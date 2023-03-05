@@ -204,8 +204,7 @@
         </div>
       </div>
       <template slot="footer">
-        <el-button v-if="dialog === 'sensors'" @click="openUpdateModal(model)">Back</el-button>
-        <el-button v-if="dialog === 'sensors'" type="primary" @click="addSensor(model)">Add</el-button>
+        <el-button type="primary" @click="addSensor(model)">Add Sensor</el-button>
         <el-button @click="cancelModal">
           Cancel
         </el-button>
@@ -588,13 +587,10 @@ export default {
      * @param {PageModel} model
      */
     addSensor(model) {
-      if (this.sensorList.length) {
-        model.sensors.push({
-          sensor_id: this.sensorChannel.sensor_id,
-          prefix: this.sensorList
-        })
-        this.sensorChannel = createSensorChannel()
-      }
+      model.sensors.push({
+        sensor_id: this.sensorChannel.sensor_id,
+        prefix: this.sensorList
+      })
     },
     async handleSubmit() {
       const form = {
