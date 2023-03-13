@@ -34,9 +34,9 @@
           {{ scope.row.group_name }}
         </template>
       </el-table-column>
-      <el-table-column label="Billing List" width="170" :align="'center'" sortable prop="billing_list">
+      <el-table-column label="Billing List" width="170" :align="'center'" sortable prop="prefixes_list_show">
         <template #default="/** @type {ElTableScope<BillingAggregateSettingModel>} */scope">
-          {{ scope.row.billing_list }}
+          {{ scope.row.prefixes_list_show }}
         </template>
       </el-table-column>
       <el-table-column label="cir" width="120" :align="'center'" sortable prop="cir">
@@ -86,12 +86,12 @@
           <el-input v-model="model.group_name" />
         </el-form-item>
         <el-form-item label="Billing List" prop="billing_list">
-          <el-select v-model="model.billing_list" filterable placeholder="Please select">
+          <el-select v-model="model.billing_list" multiple filterable placeholder="Please select">
             <el-option
               v-for="item in billingSettingOptions"
               :key="item.id"
               :label="item.billing_id"
-              :value="item.id"
+              :value="item.billing_id"
             />
           </el-select>
         </el-form-item>
@@ -320,6 +320,9 @@ export default {
       this.addQueue(req)
       return req.then(response => {
         this.list = response.data
+        this.list.forEach((item) => {
+          item['prefixes_list_show'] = item['billing_list'] == null ? '' : String(item['billing_list']).replace('[', '').replace(']', '').replaceAll(',', '\n')
+        })
         this.removeQueue(req)
       }).then(() => {
         const { query } = this.$route
@@ -465,5 +468,12 @@ export default {
 <style lang="scss">
 .filter-container {
   margin-bottom: 16px;
+}
+.app-container{
+  .el-table{
+    .cell {
+      white-space: pre-line;
+    }
+  }
 }
 </style>
