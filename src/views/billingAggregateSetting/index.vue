@@ -198,9 +198,7 @@ const PermanentOptions = {
   /** @type {'Permanent1'} */
   PERMANENT1: 'auto-every-month',
   /** @type {'Permanent2'} */
-  PERMANENT2: 'manual-one-time',
-  /** @type {'Permanent3'} */
-  PERMANENT3: 'combined-ratelimit'
+  PERMANENT2: 'manual-one-time'
 }
 
 const defaultSettings = {
